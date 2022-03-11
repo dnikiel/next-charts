@@ -6,12 +6,14 @@ import "leaflet-defaulticon-compatibility";
 
 const MapNoSSR = () => {
   const [geoData, setGeoData] = useState(null);
-  const [populationData, setPopulationData] = useState(null);
+  const [populationData, setPopulationData] = useState<Map<any, any> | null>(
+    null
+  );
 
-  const mapPopulation = (data) => {
+  const mapPopulation = (data: any) => {
     const population = new Map();
 
-    data.forEach((point) => {
+    data.forEach((point: any) => {
       population.set(point.us_county_fips, point.population);
     });
 
@@ -31,20 +33,22 @@ const MapNoSSR = () => {
     getData("/population.json").then((data) => mapPopulation(data));
   }, []);
 
-  const getStyle = (feature) => {
+  const getStyle = (feature: any) => {
     const populationNumber = populationData?.get(feature.properties.GEOID);
     const colors = ["#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"];
 
+    const defaultStyle = { weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+
     if (populationNumber > 1000000) {
-      return { color: colors[4], weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+      return { ...defaultStyle, color: colors[4] };
     } else if (populationNumber > 100000) {
-      return { color: colors[3], weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+      return { ...defaultStyle, color: colors[3] };
     } else if (populationNumber > 10000) {
-      return { color: colors[2], weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+      return { ...defaultStyle, color: colors[2] };
     } else if (populationNumber > 1000) {
-      return { color: colors[1], weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+      return { ...defaultStyle, color: colors[1] };
     } else {
-      return { color: colors[0], weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+      return { ...defaultStyle, color: colors[0] };
     }
   };
 
