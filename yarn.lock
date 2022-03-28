@@ -1384,6 +1384,11 @@ leaflet-defaulticon-compatibility@^0.1.1:
   resolved "https://registry.yarnpkg.com/leaflet-defaulticon-compatibility/-/leaflet-defaulticon-compatibility-0.1.1.tgz#ab72257b3da66fb48dab69a10c3824012a15a20a"
   integrity sha512-vDBFdlUAwjSEGep9ih8kfJilf6yN8V9zTbF5NC/1ZwLeGko3RUQepspPnGCRMFV51dY3Lb3hziboicrFz+rxQA==
 
+leaflet-pixi-overlay@^1.8.2:
+  version "1.8.2"
+  resolved "https://registry.yarnpkg.com/leaflet-pixi-overlay/-/leaflet-pixi-overlay-1.8.2.tgz#05e9dab736696560b4585583c9e3209a17e5c394"
+  integrity sha512-4xG9+yIndWuaEzpiInd6E5u9BqHpPdDRve4Dc647K5KlrYkC6HwiRtuRF2aCSFzognBQmESiS7O/2JlpjWexdA==
+
 leaflet@^1.7.1:
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.7.1.tgz#10d684916edfe1bf41d688a3b97127c0322a2a19"
