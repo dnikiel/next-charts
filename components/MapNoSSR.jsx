@@ -4,27 +4,26 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
+import * as topojson from "topojson";
 
 const MapNoSSR = () => {
   const [geoData, setGeoData] = useState(null);
-  const [populationData, setPopulationData] = useState<Map<any, any> | null>(
-    null
-  );
-  const [lMap, setLMap] = useState<any | null>(null);
+  const [populationData, setPopulationData] = useState(null);
+  const [lMap, setLMap] = useState(null);
   const mapRef = useRef(null);
 
-  const mapPopulation = (data: any) => {
+  const mapPopulation = (data) => {
     const population = new Map();
 
-    data.forEach((point: any) => {
-      population.set(point.us_county_fips, point.population);
+    data.forEach((point) => {
+      population.set(point.subregion || point.region, point.population);
     });
 
     setPopulationData(population);
   };
 
   useEffect(() => {
-    async function getData(url: string) {
+    async function getData(url) {
       const response = await fetch(url);
       const data = await response.json();
 
@@ -32,7 +31,9 @@ const MapNoSSR = () => {
       return data;
     }
 
-    getData("/counties.geojson").then((data) => setGeoData(data));
+    getData("/geoBoundaries-USA-ADM2_simplified.topojson").then((data) =>
+      setGeoData(data)
+    );
     getData("/population.json").then((data) => mapPopulation(data));
 
     if (mapRef.current && !lMap) {
@@ -49,8 +50,10 @@ const MapNoSSR = () => {
 
   useEffect(() => {
     if (lMap && geoData && populationData) {
-      const getStyle = (feature: any) => {
-        const populationNumber = populationData?.get(feature.properties.GEOID);
+      const getStyle = (feature) => {
+        const populationNumber = populationData?.get(
+          feature.properties.shapeName
+        );
         const colors = ["#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"];
 
         const defaultStyle = { weight: 1, opacity: 0.6, fillOpacity: 0.6 };
@@ -68,8 +71,41 @@ const MapNoSSR = () => {
         }
       };
 
+      //extend Leaflet to create a GeoJSON layer from a TopoJSON file
+      L.TopoJSON = L.GeoJSON.extend({
+        addData: function (data) {
+          var geojson, key;
+          if (data.type === "Topology") {
+            for (key in data.objects) {
+              if (data.objects.hasOwnProperty(key)) {
+                geojson = topojson.feature(data, data.objects[key]);
+                L.GeoJSON.prototype.addData.call(this, geojson);
+              }
+            }
+            return this;
+          }
+          L.GeoJSON.prototype.addData.call(this, data);
+          return this;
+        },
+      });
+      L.topoJson = function (data, options) {
+        return new L.TopoJSON(data, options);
+      };
+      //create an empty geojson layer
+      //with a style and a popup on click
+      var geojson = L.topoJson(null, {
+        style: function (feature) {
+          return getStyle(feature);
+        },
+        onEachFeature: function (feature, layer) {
+          layer.bindPopup("<p>" + feature.properties.shapeName + "</p>");
+        },
+      }).addTo(lMap);
+      //fetch the geojson and add it to our geojson layer
+      geojson.addData(geoData);
+
       console.log("geojson added");
-      L.geoJSON(geoData, { style: getStyle }).addTo(lMap);
+      // L.geoJSON(geoData, { style: getStyle }).addTo(lMap);
     }
   }, [lMap, geoData, populationData]);
 
