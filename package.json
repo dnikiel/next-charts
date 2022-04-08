@@ -11,6 +11,7 @@
   "dependencies": {
     "@nivo/core": "^0.78.0",
     "@nivo/line": "^0.79.1",
+    "d3-scale": "^4.0.2",
     "leaflet": "^1.7.1",
     "leaflet-defaulticon-compatibility": "^0.1.1",
     "leaflet-pixi-overlay": "^1.8.2",

@@ -1,0 +1,308 @@
+[
+  {
+    "STATE": "Alabama",
+    "POPESTIMATE2019": 4903185,
+    "lat": 32.377716,
+    "long": -86.300568
+  },
+  {
+    "STATE": "Alaska",
+    "POPESTIMATE2019": 731545,
+    "lat": 58.301598,
+    "long": -134.420212
+  },
+  {
+    "STATE": "Arizona",
+    "POPESTIMATE2019": 7278717,
+    "lat": 33.448143,
+    "long": -112.096962
+  },
+  {
+    "STATE": "Arkansas",
+    "POPESTIMATE2019": 3017804,
+    "lat": 34.746613,
+    "long": -92.288986
+  },
+  {
+    "STATE": "California",
+    "POPESTIMATE2019": 39512223,
+    "lat": 38.576668,
+    "long": -121.493629
+  },
+  {
+    "STATE": "Colorado",
+    "POPESTIMATE2019": 5758736,
+    "lat": 39.739227,
+    "long": -104.984856
+  },
+  {
+    "STATE": "Connecticut",
+    "POPESTIMATE2019": 3565287,
+    "lat": 41.764046,
+    "long": -72.682198
+  },
+  {
+    "STATE": "Delaware",
+    "POPESTIMATE2019": 973764,
+    "lat": 39.157307,
+    "long": -75.519722
+  },
+  {
+    "STATE": "District of Columbia",
+    "POPESTIMATE2019": 705749,
+    "lat": 38.89511,
+    "long": -77.03637
+  },
+  {
+    "STATE": "Florida",
+    "POPESTIMATE2019": 21477737,
+    "lat": 30.438118,
+    "long": -84.281296
+  },
+  {
+    "STATE": "Georgia",
+    "POPESTIMATE2019": 10617423,
+    "lat": 33.749027,
+    "long": -84.388229
+  },
+  {
+    "STATE": "Hawaii",
+    "POPESTIMATE2019": 1415872,
+    "lat": 21.307442,
+    "long": -157.857376
+  },
+  {
+    "STATE": "Idaho",
+    "POPESTIMATE2019": 1787065,
+    "lat": 43.617775,
+    "long": -116.199722
+  },
+  {
+    "STATE": "Illinois",
+    "POPESTIMATE2019": 12671821,
+    "lat": 39.798363,
+    "long": -89.654961
+  },
+  {
+    "STATE": "Indiana",
+    "POPESTIMATE2019": 6732219,
+    "lat": 39.768623,
+    "long": -86.162643
+  },
+  {
+    "STATE": "Iowa",
+    "POPESTIMATE2019": 3155070,
+    "lat": 41.591087,
+    "long": -93.603729
+  },
+  {
+    "STATE": "Kansas",
+    "POPESTIMATE2019": 2913314,
+    "lat": 39.048191,
+    "long": -95.677956
+  },
+  {
+    "STATE": "Kentucky",
+    "POPESTIMATE2019": 4467673,
+    "lat": 38.186722,
+    "long": -84.875374
+  },
+  {
+    "STATE": "Louisiana",
+    "POPESTIMATE2019": 4648794,
+    "lat": 30.457069,
+    "long": -91.187393
+  },
+  {
+    "STATE": "Maine",
+    "POPESTIMATE2019": 1344212,
+    "lat": 44.307167,
+    "long": -69.781693
+  },
+  {
+    "STATE": "Maryland",
+    "POPESTIMATE2019": 6045680,
+    "lat": 38.978764,
+    "long": -76.490936
+  },
+  {
+    "STATE": "Massachusetts",
+    "POPESTIMATE2019": 6892503,
+    "lat": 42.358162,
+    "long": -71.063698
+  },
+  {
+    "STATE": "Michigan",
+    "POPESTIMATE2019": 9986857,
+    "lat": 42.733635,
+    "long": -84.555328
+  },
+  {
+    "STATE": "Minnesota",
+    "POPESTIMATE2019": 5639632,
+    "lat": 44.955097,
+    "long": -93.102211
+  },
+  {
+    "STATE": "Mississippi",
+    "POPESTIMATE2019": 2976149,
+    "lat": 32.303848,
+    "long": -90.182106
+  },
+  {
+    "STATE": "Missouri",
+    "POPESTIMATE2019": 6137428,
+    "lat": 38.579201,
+    "long": -92.172935
+  },
+  {
+    "STATE": "Montana",
+    "POPESTIMATE2019": 1068778,
+    "lat": 46.585709,
+    "long": -112.018417
+  },
+  {
+    "STATE": "Nebraska",
+    "POPESTIMATE2019": 1934408,
+    "lat": 40.808075,
+    "long": -96.699654
+  },
+  {
+    "STATE": "Nevada",
+    "POPESTIMATE2019": 3080156,
+    "lat": 39.163914,
+    "long": -119.766121
+  },
+  {
+    "STATE": "New Hampshire",
+    "POPESTIMATE2019": 1359711,
+    "lat": 43.206898,
+    "long": -71.537994
+  },
+  {
+    "STATE": "New Jersey",
+    "POPESTIMATE2019": 8882190,
+    "lat": 40.220596,
+    "long": -74.769913
+  },
+  {
+    "STATE": "New Mexico",
+    "POPESTIMATE2019": 2096829,
+    "lat": 35.68224,
+    "long": -105.939728
+  },
+  {
+    "STATE": "New York",
+    "POPESTIMATE2019": 19453561,
+    "lat": 42.652843,
+    "long": -73.757874
+  },
+  {
+    "STATE": "North Carolina",
+    "POPESTIMATE2019": 10488084,
+    "lat": 35.78043,
+    "long": -78.639099
+  },
+  {
+    "STATE": "North Dakota",
+    "POPESTIMATE2019": 762062,
+    "lat": 46.82085,
+    "long": -100.783318
+  },
+  {
+    "STATE": "Ohio",
+    "POPESTIMATE2019": 11689100,
+    "lat": 39.961346,
+    "long": -82.999069
+  },
+  {
+    "STATE": "Oklahoma",
+    "POPESTIMATE2019": 3956971,
+    "lat": 35.492207,
+    "long": -97.503342
+  },
+  {
+    "STATE": "Oregon",
+    "POPESTIMATE2019": 4217737,
+    "lat": 44.938461,
+    "long": -123.030403
+  },
+  {
+    "STATE": "Pennsylvania",
+    "POPESTIMATE2019": 12801989,
+    "lat": 40.264378,
+    "long": -76.883598
+  },
+  {
+    "STATE": "Rhode Island",
+    "POPESTIMATE2019": 1059361,
+    "lat": 41.830914,
+    "long": -71.414963
+  },
+  {
+    "STATE": "South Carolina",
+    "POPESTIMATE2019": 5148714,
+    "lat": 34.000343,
+    "long": -81.033211
+  },
+  {
+    "STATE": "South Dakota",
+    "POPESTIMATE2019": 884659,
+    "lat": 44.367031,
+    "long": -100.346405
+  },
+  {
+    "STATE": "Tennessee",
+    "POPESTIMATE2019": 6829174,
+    "lat": 36.16581,
+    "long": -86.784241
+  },
+  {
+    "STATE": "Texas",
+    "POPESTIMATE2019": 28995881,
+    "lat": 30.27467,
+    "long": -97.740349
+  },
+  {
+    "STATE": "Utah",
+    "POPESTIMATE2019": 3205958,
+    "lat": 40.777477,
+    "long": -111.888237
+  },
+  {
+    "STATE": "Vermont",
+    "POPESTIMATE2019": 623989,
+    "lat": 44.262436,
+    "long": -72.580536
+  },
+  {
+    "STATE": "Virginia",
+    "POPESTIMATE2019": 8535519,
+    "lat": 37.538857,
+    "long": -77.43364
+  },
+  {
+    "STATE": "Washington",
+    "POPESTIMATE2019": 7614893,
+    "lat": 47.035805,
+    "long": -122.905014
+  },
+  {
+    "STATE": "West Virginia",
+    "POPESTIMATE2019": 1792147,
+    "lat": 38.336246,
+    "long": -81.612328
+  },
+  {
+    "STATE": "Wisconsin",
+    "POPESTIMATE2019": 5822434,
+    "lat": 43.074684,
+    "long": -89.384445
+  },
+  {
+    "STATE": "Wyoming",
+    "POPESTIMATE2019": 578759,
+    "lat": 41.140259,
+    "long": -104.820236
+  }
+]

@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
 import * as topojson from "topojson";
+import { scaleLinear } from "d3-scale";
 
 //extend Leaflet to create a GeoJSON layer from a TopoJSON file
 L.TopoJSON = L.GeoJSON.extend({
@@ -34,14 +35,50 @@ const MapNoSSR = () => {
   const [activeLevel, setActiveLevel] = useState("ADM1");
   const mapRef = useRef(null);
 
-  const mapPopulation = (data) => {
+  const mapPopulationCounty = (data) => {
     const population = new Map();
+    const domain = [data[0].population, data[0].population];
 
     data.forEach((point) => {
-      population.set(point.subregion || point.region, point.population);
+      const populationNumber = Number(point.population);
+      population.set(point.subregion || point.region, populationNumber);
+
+      if (populationNumber < domain[0]) {
+        domain[0] = populationNumber;
+      }
+
+      if (populationNumber > domain[1]) {
+        domain[1] = populationNumber;
+      }
     });
 
-    setPopulationData(population);
+    setPopulationData({
+      ...populationData,
+      ADM2: { population, domain },
+    });
+  };
+
+  const mapPopulationState = (data) => {
+    const population = new Map();
+    const domain = [data[0].POPESTIMATE2019, data[0].POPESTIMATE2019];
+
+    data.forEach((point) => {
+      const populationNumber = Number(point.POPESTIMATE2019);
+      population.set(point.STATE, populationNumber);
+
+      if (populationNumber < domain[0]) {
+        domain[0] = populationNumber;
+      }
+
+      if (populationNumber > domain[1]) {
+        domain[1] = populationNumber;
+      }
+    });
+
+    setPopulationData({
+      ...populationData,
+      ADM1: { population, domain },
+    });
   };
 
   async function getData(url) {
@@ -58,7 +95,8 @@ const MapNoSSR = () => {
         ADM1: data,
       })
     );
-    getData("/population.json").then((data) => mapPopulation(data));
+    // getData("/population.json").then((data) => mapPopulationCounty(data));
+    getData("/population_state.json").then((data) => mapPopulationState(data));
 
     if (mapRef.current && !lMap) {
       const map = L.map(mapRef.current, {
@@ -84,7 +122,7 @@ const MapNoSSR = () => {
     }
   }, []);
 
-  // fetch active data
+  // fetch active geo data
   useEffect(() => {
     if (activeLevel === "ADM2" && !geoData.ADM2) {
       getData("/geoBoundaries-USA-ADM2_simplified.topojson").then((data) =>
@@ -96,29 +134,30 @@ const MapNoSSR = () => {
     }
   }, [activeLevel, geoData]);
 
+  // fetch active population data
   useEffect(() => {
-    if (lMap && geoData && populationData) {
+    if (activeLevel === "ADM2" && !populationData.ADM2) {
+      getData("/population.json").then((data) => mapPopulationCounty(data));
+    }
+  }, [activeLevel, populationData]);
+
+  useEffect(() => {
+    if (lMap && geoData && populationData && populationData[activeLevel]) {
       const getStyle = (feature) => {
-        const populationNumber = populationData?.get(
+        const populationNumber = populationData[activeLevel].population.get(
           feature.properties.shapeName
         );
-        const colors = ["#fef0d9", "#fdcc8a", "#fc8d59", "#e34a33", "#b30000"];
 
-        const defaultStyle = { weight: 1, opacity: 0.6, fillOpacity: 0.6 };
+        const range = ["white", "red"];
+        const color = scaleLinear(populationData[activeLevel].domain, range);
 
-        return defaultStyle;
+        const defaultStyle = { weight: 1, opacity: 0.2, fillOpacity: 0.6 };
 
-        if (populationNumber > 1000000) {
-          return { ...defaultStyle, color: colors[4] };
-        } else if (populationNumber > 100000) {
-          return { ...defaultStyle, color: colors[3] };
-        } else if (populationNumber > 10000) {
-          return { ...defaultStyle, color: colors[2] };
-        } else if (populationNumber > 1000) {
-          return { ...defaultStyle, color: colors[1] };
-        } else {
-          return { ...defaultStyle, color: colors[0] };
-        }
+        return {
+          ...defaultStyle,
+          fillColor: color(populationNumber),
+          color: "red",
+        };
       };
 
       if (geoData[activeLevel]) {
@@ -131,11 +170,17 @@ const MapNoSSR = () => {
         //create an empty geojson layer
         //with a style and a popup on click
         var geojson = L.topoJson(null, {
-          style: function (feature) {
-            return getStyle(feature);
-          },
-          onEachFeature: function (feature, layer) {
-            layer.bindPopup("<p>" + feature.properties.shapeName + "</p>");
+          style: (feature) => getStyle(feature),
+          onEachFeature: (feature, layer) => {
+            const populationNumber = populationData[activeLevel].population.get(
+              feature.properties.shapeName
+            );
+
+            layer.bindPopup(
+              `<p>${
+                feature.properties.shapeName
+              }: ${new Intl.NumberFormat().format(populationNumber)}</p>`
+            );
           },
         }).addTo(lMap);
 
