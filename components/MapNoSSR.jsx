@@ -6,6 +6,7 @@ import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility
 import "leaflet-defaulticon-compatibility";
 import * as topojson from "topojson";
 import { scaleLinear } from "d3-scale";
+import leafletPip from "@mapbox/leaflet-pip";
 
 //extend Leaflet to create a GeoJSON layer from a TopoJSON file
 L.TopoJSON = L.GeoJSON.extend({
@@ -28,11 +29,24 @@ L.topoJson = function (data, options) {
   return new L.TopoJSON(data, options);
 };
 
+const topojsonFiles = {
+  us: {
+    ADM1: "/geoBoundaries-USA-ADM1_simplified.topojson",
+    ADM2: "/geoBoundaries-USA-ADM2_simplified.topojson",
+  },
+  uk: {
+    ADM1: "geoBoundaries-GBR-ADM1_simplified.topojson",
+    ADM2: "geoBoundaries-GBR-ADM2_simplified.topojson",
+  },
+};
+
 const MapNoSSR = () => {
   const [geoData, setGeoData] = useState(null);
   const [populationData, setPopulationData] = useState(null);
   const [lMap, setLMap] = useState(null);
   const [activeLevel, setActiveLevel] = useState("ADM1");
+  const [activeCountry, setActiveCountry] = useState("US");
+  const [centerPoint, setCenterPoint] = useState({});
   const mapRef = useRef(null);
 
   const mapPopulationCountry = (data) => {
@@ -125,17 +139,21 @@ const MapNoSSR = () => {
       const map = L.map(mapRef.current, {
         center: [39, -100],
         zoom: 5,
-      }).on("zoomend", function (e) {
-        const zoomLevel = e.target._zoom;
+      })
+        .on("zoomend", function (e) {
+          const zoomLevel = e.target._zoom;
 
-        if (zoomLevel > 7) {
-          setActiveLevel("ADM2");
-        } else if (zoomLevel > 4) {
-          setActiveLevel("ADM1");
-        } else {
-          setActiveLevel("ADM0");
-        }
-      });
+          if (zoomLevel > 7) {
+            setActiveLevel("ADM2");
+          } else if (zoomLevel > 4) {
+            setActiveLevel("ADM1");
+          } else {
+            setActiveLevel("ADM0");
+          }
+        })
+        .on("moveend", function () {
+          setCenterPoint(map.getCenter());
+        });
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         id: "openstreetmap",
@@ -225,15 +243,23 @@ const MapNoSSR = () => {
         }).addTo(lMap);
 
         geojson.on("click", function (e) {
-          console.log(e.layer.feature.properties["Alpha-2"]);
+          const countryCode = e.layer.feature.properties["Alpha-2"];
+          console.log(countryCode);
+
+          if (countryCode === "US") {
+            setActiveLevel("ADM1");
+          }
         });
 
         geojson.addData(geoData[activeLevel]);
+
+        var results = leafletPip.pointInLayer(centerPoint, geojson, true);
+        console.log(results[0]?.feature.properties.name);
       }
 
       // L.geoJSON(geoData, { style: getStyle }).addTo(lMap);
     }
-  }, [lMap, geoData, populationData, activeLevel]);
+  }, [lMap, geoData, populationData, activeLevel, centerPoint]);
 
   return (
     <div ref={mapRef} id="map" style={{ height: "100%", width: "100%" }}></div>
