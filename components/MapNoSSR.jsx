@@ -35,6 +35,29 @@ const MapNoSSR = () => {
   const [activeLevel, setActiveLevel] = useState("ADM1");
   const mapRef = useRef(null);
 
+  const mapPopulationCountry = (data) => {
+    const population = new Map();
+    const domain = [data[0].population, data[0].population];
+
+    data.forEach((point) => {
+      const populationNumber = Number(point.population);
+      population.set(point.country, populationNumber);
+
+      if (populationNumber < domain[0]) {
+        domain[0] = populationNumber;
+      }
+
+      if (populationNumber > domain[1]) {
+        domain[1] = populationNumber;
+      }
+    });
+
+    setPopulationData({
+      ...populationData,
+      ADM0: { population, domain },
+    });
+  };
+
   const mapPopulationCounty = (data) => {
     const population = new Map();
     const domain = [data[0].population, data[0].population];
@@ -107,8 +130,10 @@ const MapNoSSR = () => {
 
         if (zoomLevel > 7) {
           setActiveLevel("ADM2");
-        } else {
+        } else if (zoomLevel > 4) {
           setActiveLevel("ADM1");
+        } else {
+          setActiveLevel("ADM0");
         }
       });
 
@@ -132,6 +157,15 @@ const MapNoSSR = () => {
         })
       );
     }
+
+    if (activeLevel === "ADM0" && !geoData.ADM0) {
+      getData("/world-countries.topojson").then((data) =>
+        setGeoData({
+          ...geoData,
+          ADM0: data,
+        })
+      );
+    }
   }, [activeLevel, geoData]);
 
   // fetch active population data
@@ -139,13 +173,19 @@ const MapNoSSR = () => {
     if (activeLevel === "ADM2" && !populationData.ADM2) {
       getData("/population.json").then((data) => mapPopulationCounty(data));
     }
+
+    if (activeLevel === "ADM0" && !populationData.ADM0) {
+      getData("/population_country.json").then((data) =>
+        mapPopulationCountry(data)
+      );
+    }
   }, [activeLevel, populationData]);
 
   useEffect(() => {
     if (lMap && geoData && populationData && populationData[activeLevel]) {
       const getStyle = (feature) => {
         const populationNumber = populationData[activeLevel].population.get(
-          feature.properties.shapeName
+          feature.properties.shapeName || feature.properties.name
         );
 
         const range = ["white", "red"];
@@ -155,7 +195,7 @@ const MapNoSSR = () => {
 
         return {
           ...defaultStyle,
-          fillColor: color(populationNumber),
+          fillColor: populationNumber ? color(populationNumber) : range[0],
           color: "red",
         };
       };
@@ -173,16 +213,20 @@ const MapNoSSR = () => {
           style: (feature) => getStyle(feature),
           onEachFeature: (feature, layer) => {
             const populationNumber = populationData[activeLevel].population.get(
-              feature.properties.shapeName
+              feature.properties.shapeName || feature.properties.name
             );
 
             layer.bindPopup(
               `<p>${
-                feature.properties.shapeName
+                feature.properties.shapeName || feature.properties.name
               }: ${new Intl.NumberFormat().format(populationNumber)}</p>`
             );
           },
         }).addTo(lMap);
+
+        geojson.on("click", function (e) {
+          console.log(e.layer.feature.properties["Alpha-2"]);
+        });
 
         geojson.addData(geoData[activeLevel]);
       }
