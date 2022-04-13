@@ -30,93 +30,111 @@ L.topoJson = function (data, options) {
 };
 
 const topojsonFiles = {
-  us: {
+  WORLD: {
+    ADM0: "/world-countries.topojson",
+    ADM1: "/world-countries.topojson",
+    ADM2: "/world-countries.topojson",
+  },
+  US: {
+    ADM0: "/world-countries.topojson",
     ADM1: "/geoBoundaries-USA-ADM1_simplified.topojson",
     ADM2: "/geoBoundaries-USA-ADM2_simplified.topojson",
   },
-  uk: {
-    ADM1: "geoBoundaries-GBR-ADM1_simplified.topojson",
-    ADM2: "geoBoundaries-GBR-ADM2_simplified.topojson",
+  GB: {
+    ADM0: "/world-countries.topojson",
+    ADM1: "/geoBoundaries-GBR-ADM1_simplified.topojson",
+    ADM2: "/geoBoundaries-GBR-ADM2_simplified.topojson",
   },
 };
 
 const MapNoSSR = () => {
-  const [geoData, setGeoData] = useState(null);
+  const [geoData, setGeoData] = useState({
+    US: {
+      ADM1: null,
+      ADM2: null,
+    },
+    UK: {
+      ADM1: null,
+      ADM2: null,
+    },
+  });
   const [populationData, setPopulationData] = useState(null);
   const [lMap, setLMap] = useState(null);
   const [activeLevel, setActiveLevel] = useState("ADM1");
   const [activeCountry, setActiveCountry] = useState("US");
   const [centerPoint, setCenterPoint] = useState({});
+  const [geojsonLayer, setGeojsonLayer] = useState(null);
+
   const mapRef = useRef(null);
 
-  const mapPopulationCountry = (data) => {
-    const population = new Map();
-    const domain = [data[0].population, data[0].population];
+  // const mapPopulationCountry = (data) => {
+  //   const population = new Map();
+  //   const domain = [data[0].population, data[0].population];
 
-    data.forEach((point) => {
-      const populationNumber = Number(point.population);
-      population.set(point.country, populationNumber);
+  //   data.forEach((point) => {
+  //     const populationNumber = Number(point.population);
+  //     population.set(point.country, populationNumber);
 
-      if (populationNumber < domain[0]) {
-        domain[0] = populationNumber;
-      }
+  //     if (populationNumber < domain[0]) {
+  //       domain[0] = populationNumber;
+  //     }
 
-      if (populationNumber > domain[1]) {
-        domain[1] = populationNumber;
-      }
-    });
+  //     if (populationNumber > domain[1]) {
+  //       domain[1] = populationNumber;
+  //     }
+  //   });
 
-    setPopulationData({
-      ...populationData,
-      ADM0: { population, domain },
-    });
-  };
+  //   setPopulationData({
+  //     ...populationData,
+  //     ADM0: { population, domain },
+  //   });
+  // };
 
-  const mapPopulationCounty = (data) => {
-    const population = new Map();
-    const domain = [data[0].population, data[0].population];
+  // const mapPopulationCounty = (data) => {
+  //   const population = new Map();
+  //   const domain = [data[0].population, data[0].population];
 
-    data.forEach((point) => {
-      const populationNumber = Number(point.population);
-      population.set(point.subregion || point.region, populationNumber);
+  //   data.forEach((point) => {
+  //     const populationNumber = Number(point.population);
+  //     population.set(point.subregion || point.region, populationNumber);
 
-      if (populationNumber < domain[0]) {
-        domain[0] = populationNumber;
-      }
+  //     if (populationNumber < domain[0]) {
+  //       domain[0] = populationNumber;
+  //     }
 
-      if (populationNumber > domain[1]) {
-        domain[1] = populationNumber;
-      }
-    });
+  //     if (populationNumber > domain[1]) {
+  //       domain[1] = populationNumber;
+  //     }
+  //   });
 
-    setPopulationData({
-      ...populationData,
-      ADM2: { population, domain },
-    });
-  };
+  //   setPopulationData({
+  //     ...populationData,
+  //     ADM2: { population, domain },
+  //   });
+  // };
 
-  const mapPopulationState = (data) => {
-    const population = new Map();
-    const domain = [data[0].POPESTIMATE2019, data[0].POPESTIMATE2019];
+  // const mapPopulationState = (data) => {
+  //   const population = new Map();
+  //   const domain = [data[0].POPESTIMATE2019, data[0].POPESTIMATE2019];
 
-    data.forEach((point) => {
-      const populationNumber = Number(point.POPESTIMATE2019);
-      population.set(point.STATE, populationNumber);
+  //   data.forEach((point) => {
+  //     const populationNumber = Number(point.POPESTIMATE2019);
+  //     population.set(point.STATE, populationNumber);
 
-      if (populationNumber < domain[0]) {
-        domain[0] = populationNumber;
-      }
+  //     if (populationNumber < domain[0]) {
+  //       domain[0] = populationNumber;
+  //     }
 
-      if (populationNumber > domain[1]) {
-        domain[1] = populationNumber;
-      }
-    });
+  //     if (populationNumber > domain[1]) {
+  //       domain[1] = populationNumber;
+  //     }
+  //   });
 
-    setPopulationData({
-      ...populationData,
-      ADM1: { population, domain },
-    });
-  };
+  //   setPopulationData({
+  //     ...populationData,
+  //     ADM1: { population, domain },
+  //   });
+  // };
 
   async function getData(url) {
     const response = await fetch(url);
@@ -126,14 +144,19 @@ const MapNoSSR = () => {
   }
 
   useEffect(() => {
-    getData("/geoBoundaries-USA-ADM1_simplified.topojson").then((data) =>
-      setGeoData({
-        ...geoData,
-        ADM1: data,
-      })
-    );
-    // getData("/population.json").then((data) => mapPopulationCounty(data));
-    getData("/population_state.json").then((data) => mapPopulationState(data));
+    if (geoData[activeCountry][activeLevel]) {
+      getData(geoData[activeCountry][activeLevel]).then((data) =>
+        setGeoData({
+          ...geoData,
+          [activeCountry]: {
+            ...geoData[activeCountry],
+            [activeLevel]: data,
+          },
+        })
+      );
+    }
+
+    // getData("/population_state.json").then((data) => mapPopulationState(data));
 
     if (mapRef.current && !lMap) {
       const map = L.map(mapRef.current, {
@@ -149,6 +172,7 @@ const MapNoSSR = () => {
             setActiveLevel("ADM1");
           } else {
             setActiveLevel("ADM0");
+            // setActiveCountry("WORLD");
           }
         })
         .on("moveend", function () {
@@ -167,58 +191,84 @@ const MapNoSSR = () => {
 
   // fetch active geo data
   useEffect(() => {
-    if (activeLevel === "ADM2" && !geoData.ADM2) {
-      getData("/geoBoundaries-USA-ADM2_simplified.topojson").then((data) =>
+    if (
+      topojsonFiles[activeCountry] &&
+      (!geoData[activeCountry] || !geoData[activeCountry][activeLevel])
+    ) {
+      getData(topojsonFiles[activeCountry][activeLevel]).then((data) =>
         setGeoData({
           ...geoData,
-          ADM2: data,
+          [activeCountry]: {
+            ...geoData[activeCountry],
+            [activeLevel]: data,
+          },
         })
       );
     }
 
-    if (activeLevel === "ADM0" && !geoData.ADM0) {
-      getData("/world-countries.topojson").then((data) =>
-        setGeoData({
-          ...geoData,
-          ADM0: data,
-        })
-      );
-    }
-  }, [activeLevel, geoData]);
+    // if (activeLevel === "ADM2" && !geoData.ADM2) {
+    //   getData("/geoBoundaries-USA-ADM2_simplified.topojson").then((data) =>
+    //     setGeoData({
+    //       ...geoData,
+    //       ADM2: data,
+    //     })
+    //   );
+    // }
+
+    // if (activeLevel === "ADM0" && !geoData.ADM0) {
+    //   getData("/world-countries.topojson").then((data) =>
+    //     setGeoData({
+    //       ...geoData,
+    //       ADM0: data,
+    //     })
+    //   );
+    // }
+  }, [activeLevel, activeCountry, geoData]);
 
   // fetch active population data
-  useEffect(() => {
-    if (activeLevel === "ADM2" && !populationData.ADM2) {
-      getData("/population.json").then((data) => mapPopulationCounty(data));
-    }
+  // useEffect(() => {
+  //   if (activeLevel === "ADM2" && !populationData.ADM2) {
+  //     getData("/population.json").then((data) => mapPopulationCounty(data));
+  //   }
 
-    if (activeLevel === "ADM0" && !populationData.ADM0) {
-      getData("/population_country.json").then((data) =>
-        mapPopulationCountry(data)
-      );
-    }
-  }, [activeLevel, populationData]);
+  //   if (activeLevel === "ADM0" && !populationData.ADM0) {
+  //     getData("/population_country.json").then((data) =>
+  //       mapPopulationCountry(data)
+  //     );
+  //   }
+  // }, [activeLevel, populationData]);
 
   useEffect(() => {
-    if (lMap && geoData && populationData && populationData[activeLevel]) {
+    if (lMap && geoData) {
       const getStyle = (feature) => {
-        const populationNumber = populationData[activeLevel].population.get(
-          feature.properties.shapeName || feature.properties.name
-        );
+        // const populationNumber = populationData[activeLevel].population.get(
+        //   feature.properties.shapeName || feature.properties.name
+        // );
 
         const range = ["white", "red"];
-        const color = scaleLinear(populationData[activeLevel].domain, range);
+        const color = scaleLinear([0, 30], range);
 
-        const defaultStyle = { weight: 1, opacity: 0.2, fillOpacity: 0.6 };
+        const defaultStyle = {
+          weight: 1,
+          opacity: 0.2,
+          fillOpacity: 0.6,
+        };
 
         return {
           ...defaultStyle,
-          fillColor: populationNumber ? color(populationNumber) : range[0],
+          fillColor: color(
+            feature.properties.shapeName?.length ||
+              feature.properties.name?.length
+          ),
           color: "red",
         };
       };
 
-      if (geoData[activeLevel]) {
+      if (
+        topojsonFiles[activeCountry] &&
+        geoData[activeCountry] &&
+        geoData[activeCountry][activeLevel]
+      ) {
         lMap.eachLayer(function (layer) {
           if (layer.options.id !== "openstreetmap") {
             lMap.removeLayer(layer);
@@ -230,36 +280,50 @@ const MapNoSSR = () => {
         var geojson = L.topoJson(null, {
           style: (feature) => getStyle(feature),
           onEachFeature: (feature, layer) => {
-            const populationNumber = populationData[activeLevel].population.get(
-              feature.properties.shapeName || feature.properties.name
-            );
-
+            // const populationNumber = populationData[activeLevel].population.get(
+            //   feature.properties.shapeName || feature.properties.name
+            // );
             layer.bindPopup(
-              `<p>${
-                feature.properties.shapeName || feature.properties.name
-              }: ${new Intl.NumberFormat().format(populationNumber)}</p>`
+              `<p>${feature.properties.shapeName || feature.properties.name}: ${
+                feature.properties.shapeName?.length ||
+                feature.properties.name?.length
+              }</p>`
             );
           },
         }).addTo(lMap);
 
-        geojson.on("click", function (e) {
-          const countryCode = e.layer.feature.properties["Alpha-2"];
-          console.log(countryCode);
+        // geojson.on("click", function (e) {
+        //   const countryCode = e.layer.feature.properties["Alpha-2"];
+        //   console.log(countryCode);
 
-          if (countryCode === "US") {
-            setActiveLevel("ADM1");
-          }
-        });
+        //   if (countryCode === "US") {
+        //     setActiveLevel("ADM1");
+        //   }
+        // });
 
-        geojson.addData(geoData[activeLevel]);
+        geojson.addData(geoData[activeCountry][activeLevel]);
 
-        var results = leafletPip.pointInLayer(centerPoint, geojson, true);
-        console.log(results[0]?.feature.properties.name);
+        setGeojsonLayer(geojson);
       }
 
       // L.geoJSON(geoData, { style: getStyle }).addTo(lMap);
     }
-  }, [lMap, geoData, populationData, activeLevel, centerPoint]);
+  }, [lMap, geoData, populationData, activeLevel, activeCountry]);
+
+  useEffect(() => {
+    if (geojsonLayer) {
+      const results = leafletPip.pointInLayer(centerPoint, geojsonLayer, true);
+      const countryCode = results[0]?.feature.properties["Alpha-2"];
+
+      console.log(countryCode, activeLevel);
+
+      if (countryCode) {
+        setActiveCountry(countryCode);
+      } else if (!countryCode && activeLevel === "ADM0") {
+        setActiveCountry("WORLD");
+      }
+    }
+  }, [geojsonLayer, centerPoint, activeLevel]);
 
   return (
     <div ref={mapRef} id="map" style={{ height: "100%", width: "100%" }}></div>
