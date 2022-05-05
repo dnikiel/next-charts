@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import L from "leaflet";
-// import pixiOverlay from "leaflet-pixi-overlay";
 import "leaflet/dist/leaflet.css";
 import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
 import "leaflet-defaulticon-compatibility";
